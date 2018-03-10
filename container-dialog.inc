@@ -146,6 +146,7 @@ stock DisplayContainerInventory(playerid, containerid) {
 	cnt_InventoryString[playerid][0] = EOS;
 	cnt_ItemListTotal[playerid] = 0;
 
+	new itemsize;
 	for(new i; i < containerSize; i++) {
 		GetContainerSlotItem(containerid, i, itemid);
 
@@ -154,8 +155,9 @@ stock DisplayContainerInventory(playerid, containerid) {
 		}
 
 		GetItemName(itemid, tmp);
+		GetItemTypeSize(GetItemType(itemid), itemsize);
 
-		format(cnt_InventoryString[playerid], sizeof(cnt_InventoryString[]), "%s[%02d]%s\n", cnt_InventoryString[playerid], GetItemTypeSize(GetItemType(itemid)), tmp);
+		format(cnt_InventoryString[playerid], sizeof(cnt_InventoryString[]), "%s[%02d]%s\n", cnt_InventoryString[playerid], itemsize, tmp);
 		cnt_ItemListTotal[playerid]++;
 	}
 
