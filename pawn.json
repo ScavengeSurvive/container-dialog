@@ -1,8 +1,16 @@
 {
-    "user": "ScavengeSurvive",
-    "repo": "library_name",
-    "entry": "test.pwn",
-    "output": "test.amx",
-    "dependencies": ["sampctl/samp-stdlib"],
-    "dev_dependencies": ["ScavengeSurvive/test-boilerplate"]
+	"user": "ScavengeSurvive",
+	"repo": "container-dialog",
+	"entry": "test.pwn",
+	"output": "test.amx",
+	"dependencies": [
+		"sampctl/samp-stdlib",
+		"Awsomedude/easyDialog",
+		"ScavengeSurvive/container",
+		"ScavengeSurvive/inventory-dialog",
+		"Southclaws/zcmd"
+	],
+	"dev_dependencies": [
+		"ScavengeSurvive/test-boilerplate"
+	]
 }
