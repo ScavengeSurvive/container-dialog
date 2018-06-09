@@ -436,7 +436,7 @@ hook OnPlayerSelectExtraItem(playerid, item) {
 		if(item == cnt_InventoryContainerItem[playerid]) {
 			ClosePlayerInventory(playerid);
 			DisplayContainerInventory(playerid, cnt_CurrentContainer[playerid]);
-			return Y_HOOKS_CONTINUE_RETURN_1;
+			return Y_HOOKS_CONTINUE_RETURN_0;
 		}
 	}
 
