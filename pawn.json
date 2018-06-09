@@ -1,6 +1,7 @@
 {
 	"user": "ScavengeSurvive",
 	"repo": "container-dialog",
+	"tag": "1.7.1",
 	"entry": "test.pwn",
 	"output": "test.amx",
 	"dependencies": [
@@ -11,6 +12,14 @@
 		"Southclaws/zcmd"
 	],
 	"dev_dependencies": [
-		"ScavengeSurvive/test-boilerplate"
-	]
+		"ScavengeSurvive/test-boilerplate",
+		"ScavengeSurvive/test-boilerplate-item",
+		"ScavengeSurvive/test-boilerplate-items"
+	],
+	"runtime": {
+		"version": "0.3.7",
+		"mode": "server",
+		"rcon_password": "password",
+		"port": 7777
+	}
 }

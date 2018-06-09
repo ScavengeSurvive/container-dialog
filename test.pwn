@@ -1,28 +1,16 @@
 #include "container-dialog.inc"
 
 #include <test-boilerplate>
+#include <test-boilerplate-items>
 #include <zcmd>
 
 
-new ItemType:itemType;
-new container;
+new Container:container;
 
 main() {
-	itemType = DefineItemType("Medkit", "Medkit", 11736, 1, 0.0, 0.0, 0.0, 0.004, 0.197999, 0.038000, 0.021000,  79.700012, 0.000000, 90.899978);
+	logger_debug("container-dialog", true);
+	logger_debug("inventory-dialog", true);
 	container = CreateContainer("test container", 10);
-}
-
-CMD:item(playerid, params[]) {
-	new
-		Float:x,
-		Float:y,
-		Float:z;
-	
-	GetPlayerPos(playerid, x, y, z);
-
-	CreateItem(itemType, x, y, z - 0.8);
-
-	return 1;
 }
 
 CMD:container(playerid, params[]) {
@@ -30,43 +18,43 @@ CMD:container(playerid, params[]) {
 	return 1;
 }
 
-public OnPlayerOpenContainer(playerid, containerid) {
+public OnPlayerOpenContainer(playerid, Container:containerid) {
 	log("OnPlayerOpenContainer",
 		_i("playerid", playerid),
-		_i("containerid", containerid));
+		_i("containerid", _:containerid));
 }
 
-public OnPlayerCloseContainer(playerid, containerid) {
+public OnPlayerCloseContainer(playerid, Container:containerid) {
 	log("OnPlayerCloseContainer",
 		_i("playerid", playerid),
-		_i("containerid", containerid));
+		_i("containerid", _:containerid));
 }
 
-public OnPlayerViewContainerOpt(playerid, containerid) {
+public OnPlayerViewContainerOpt(playerid, Container:containerid) {
 	log("OnPlayerViewContainerOpt",
 		_i("playerid", playerid),
-		_i("containerid", containerid));
+		_i("containerid", _:containerid));
 }
 
-public OnPlayerSelectContainerOpt(playerid, containerid, option) {
+public OnPlayerSelectContainerOpt(playerid, Container:containerid, option) {
 	log("OnPlayerSelectContainerOpt",
 		_i("playerid", playerid),
-		_i("containerid", containerid),
+		_i("containerid", _:containerid),
 		_i("option", option));
 }
 
-public OnMoveItemToContainer(playerid, itemid, containerid) {
+public OnMoveItemToContainer(playerid, Item:itemid, Container:containerid) {
 	log("OnMoveItemToContainer",
 		_i("playerid", playerid),
-		_i("itemid", itemid),
-		_i("containerid", containerid));
+		_i("itemid", _:itemid),
+		_i("containerid", _:containerid));
 }
 
-public OnMoveItemToInventory(playerid, itemid, containerid) {
+public OnMoveItemToInventory(playerid, Item:itemid, Container:containerid) {
 	log("OnMoveItemToInventory",
 		_i("playerid", playerid),
-		_i("itemid", itemid),
-		_i("containerid", containerid));
+		_i("itemid", _:itemid),
+		_i("containerid", _:containerid));
 }
 
 
@@ -97,14 +85,14 @@ public OnPlayerSelectInventoryOpt(playerid, option) {
 		_i("option", option));
 }
 
-public OnPlayerAddToInventory(playerid, itemid, success) {
+public OnPlayerAddToInventory(playerid, Item:itemid, bool:success) {
 	log("OnPlayerAddToInventory",
 		_i("playerid", playerid),
 		_i("success", success));
 }
 
-public OnPlayerAddedToInventory(playerid, itemid) {
+public OnPlayerAddedToInventory(playerid, Item:itemid) {
 	log("OnPlayerAddedToInventory",
 		_i("playerid", playerid),
-		_i("itemid", itemid));
+		_i("itemid", _:itemid));
 }
