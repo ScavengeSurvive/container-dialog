@@ -63,7 +63,8 @@ forward OnPlayerCloseContainer(playerid, Container:containerid);
 forward OnPlayerViewContainerOpt(playerid, Container:containerid);
 
 // OnPlayerSelectContainerOpt is called when a player selects a container option
-// other than the default equip/move to inventory options.
+// other than the default equip/move to inventory options. Return 1 to close the
+// dialog afterwards.
 forward OnPlayerSelectContainerOpt(playerid, Container:containerid, option);
 
 // OnMoveItemToContainer is called when a player moves an item from their
@@ -355,7 +356,12 @@ Dialog:_container_optionsList(playerid, response, listitem, inputtext[]) {
 		}
 
 		default: {
-			CallLocalFunction("OnPlayerSelectContainerOpt", "ddd", playerid, _:cnt_CurrentContainer[playerid], listitem - 2);
+			if(!CallLocalFunction("OnPlayerSelectContainerOpt", "ddd", playerid, _:cnt_CurrentContainer[playerid], listitem - 2)) {
+				DisplayContainerInventory(playerid, cnt_CurrentContainer[playerid]);
+			} else {
+				dbg("container-dialog", "closing container via option response");
+				ClosePlayerInventory(playerid);
+			}
 		}
 	}
 
