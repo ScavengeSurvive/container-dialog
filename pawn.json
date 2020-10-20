@@ -6,7 +6,6 @@
 	"output": "test.amx",
 	"dependencies": [
 		"sampctl/samp-stdlib",
-		"Awsomedude/easyDialog",
 		"ScavengeSurvive/container",
 		"ScavengeSurvive/inventory-dialog",
 		"Southclaws/zcmd"

@@ -14,8 +14,8 @@
 #include <logger>
 #include <container>
 #include <inventory-dialog>
-#include <easyDialog>
-#include <YSI\y_hooks>
+#include <YSI_Visual\y_dialog>
+#include <YSI_Coding\y_hooks>
 
 
 // -
@@ -37,7 +37,7 @@ forward GetPlayerContainerSlot(playerid, &slot);
 // AddContainerOption adds an option to container options menu. This function
 // should only ever be used in `OnPlayerViewContainerOpt`. Returns the ID of the
 // option row added to the menu.
-forward AddContainerOption(playerid, option[]);
+forward AddContainerOption(playerid, const option[]);
 
 
 // -
@@ -102,10 +102,10 @@ stock DisplayContainerInventory(playerid, Container:containerid) {
 		return 1;
 	}
 
-	dbg("container-dialog", "displaying container dialog to player",
-		_i("playerid", playerid),
-		_i("containerid", _:containerid),
-		_i("viewingInventory", IsPlayerViewingInventory(playerid)));
+	Logger_Dbg("container-dialog", "displaying container dialog to player",
+		Logger_I("playerid", playerid),
+		Logger_I("containerid", _:containerid),
+		Logger_I("viewingInventory", IsPlayerViewingInventory(playerid)));
 
 	new
 		containerSize,
@@ -155,49 +155,50 @@ stock DisplayContainerInventory(playerid, Container:containerid) {
 	format(title, sizeof(title), "%s (%d/%d)", containername, containerSize - freeSlots, containerSize);
 
 	if(strlen(cnt_InventoryString[playerid]) >= 2048) {
-		err("cnt_InventoryString is over 2048 chars: %d",
-			_i("length", strlen(cnt_InventoryString[playerid])));
+		Logger_Err("cnt_InventoryString is over 2048 chars: %d",
+			Logger_I("length", strlen(cnt_InventoryString[playerid])));
 	}
 
-	Dialog_Show(playerid, _container_dialog, DIALOG_STYLE_LIST, title, cnt_InventoryString[playerid], "Options", "Close");
+	inline Response(pid, dialogid, response, listitem, string:inputtext[]) {
+		#pragma unused pid, dialogid, inputtext
 
-	return 0;
-}
+		Logger_Dbg("container-dialog", "player responded to container dialog",
+			Logger_I("playerid", playerid),
+			Logger_I("containerid", _:cnt_CurrentContainer[playerid]));
 
-Dialog:_container_dialog(playerid, response, listitem, inputtext[]) {
-	dbg("container-dialog", "player responded to container dialog",
-		_i("playerid", playerid),
-		_i("containerid", _:cnt_CurrentContainer[playerid]));
-
-	if(response) {
-		if(!IsValidContainer(cnt_CurrentContainer[playerid])) {
-			return 0;
-		}
-
-		// dbg("container-dialog", "listitem %d total %d itemcount %d freeslots %d", listitem, cnt_ItemListTotal[playerid], GetContainerItemCount(cnt_CurrentContainer[playerid]), GetContainerFreeSlots(cnt_CurrentContainer[playerid]));
-
-		if(listitem >= cnt_ItemListTotal[playerid]) {
-			DisplayPlayerInventory(playerid);
-		} else {
-			if(!(0 <= listitem < MAX_CONTAINER_SLOTS)) {
-				err("invalid listitem value", _i("listitem", listitem));
+		if(response) {
+			if(!IsValidContainer(cnt_CurrentContainer[playerid])) {
 				return 0;
 			}
 
-			new Item:itemid;
-			new ret = GetContainerSlotItem(cnt_CurrentContainer[playerid], listitem, itemid);
-			if(ret || !IsValidItem(itemid)) {
-				DisplayContainerInventory(playerid, cnt_CurrentContainer[playerid]);
-			} else {
-				cnt_SelectedSlot[playerid] = listitem;
-				_container_displayOptions(playerid, listitem);
-			}
-		}
-	} else {
-		ClosePlayerContainer(playerid, true);
-	}
+			// Logger_Dbg("container-dialog", "listitem %d total %d itemcount %d freeslots %d", listitem, cnt_ItemListTotal[playerid], GetContainerItemCount(cnt_CurrentContainer[playerid]), GetContainerFreeSlots(cnt_CurrentContainer[playerid]));
 
-	return 1;
+			if(listitem >= cnt_ItemListTotal[playerid]) {
+				DisplayPlayerInventory(playerid);
+			} else {
+				if(!(0 <= listitem < MAX_CONTAINER_SLOTS)) {
+					Logger_Err("invalid listitem value", Logger_I("listitem", listitem));
+					return 0;
+				}
+
+				new Item:itemid2;
+				new ret = GetContainerSlotItem(cnt_CurrentContainer[playerid], listitem, itemid2);
+				if(ret || !IsValidItem(itemid2)) {
+					DisplayContainerInventory(playerid, cnt_CurrentContainer[playerid]);
+				} else {
+					cnt_SelectedSlot[playerid] = listitem;
+					_container_displayOptions(playerid, listitem);
+				}
+			}
+		} else {
+			ClosePlayerContainer(playerid, true);
+		}
+
+		return 1;
+	}
+	Dialog_ShowCallback(playerid, using inline Response, DIALOG_STYLE_LIST, title, cnt_InventoryString[playerid], "Options", "Close");
+
+	return 0;
 }
 
 stock ClosePlayerContainer(playerid, call = false) {
@@ -205,9 +206,9 @@ stock ClosePlayerContainer(playerid, call = false) {
 		return 1;
 	}
 
-	dbg("container-dialog", "closing container dialog for player",
-		_i("playerid", playerid),
-		_i("containerid", _:cnt_CurrentContainer[playerid]));
+	Logger_Dbg("container-dialog", "closing container dialog for player",
+		Logger_I("playerid", playerid),
+		Logger_I("containerid", _:cnt_CurrentContainer[playerid]));
 
 	if(cnt_CurrentContainer[playerid] == INVALID_CONTAINER_ID) {
 		return 2;
@@ -244,7 +245,7 @@ stock GetPlayerContainerSlot(playerid, &slot) {
 	return 0;
 }
 
-stock AddContainerOption(playerid, option[]) {
+stock AddContainerOption(playerid, const option[]) {
 	if(strlen(cnt_OptionsList[playerid]) + strlen(option) > sizeof(cnt_OptionsList[])) {
 		return -1;
 	}
@@ -268,104 +269,104 @@ hook OnPlayerConnect(playerid) {
 _container_displayOptions(playerid, slotid) {
 	new
 		tmp[MAX_ITEM_NAME + MAX_ITEM_TEXT],
-		Item:itemid;
+		Item:itemid_outer;
 	
-	GetContainerSlotItem(cnt_CurrentContainer[playerid], slotid, itemid);
+	GetContainerSlotItem(cnt_CurrentContainer[playerid], slotid, itemid_outer);
 
-	GetItemName(itemid, tmp);
+	GetItemName(itemid_outer, tmp);
 
 	cnt_OptionsList[playerid] = "Equip\nMove to inventory\n";
 	cnt_OptionsCount[playerid] = 0;
 
 	CallLocalFunction("OnPlayerViewContainerOpt", "dd", playerid, _:cnt_CurrentContainer[playerid]);
 
-	Dialog_Show(playerid, _container_optionsList, DIALOG_STYLE_LIST, tmp, cnt_OptionsList[playerid], "Accept", "Back");
+	inline Response(pid, dialogid, response, listitem, string:inputtext[]) {
+		#pragma unused pid, dialogid, inputtext
+		if(!response) {
+			DisplayContainerInventory(playerid, cnt_CurrentContainer[playerid]);
+			return 1;
+		}
 
-	return 0;
-}
+		switch(listitem) {
+			case 0: {
+				if(GetPlayerItem(playerid) == INVALID_ITEM_ID) {
+					new
+						Item:itemid,
+						ret;
 
-Dialog:_container_optionsList(playerid, response, listitem, inputtext[]) {
-	if(!response) {
-		DisplayContainerInventory(playerid, cnt_CurrentContainer[playerid]);
-		return 1;
-	}
+					ret = GetContainerSlotItem(cnt_CurrentContainer[playerid], cnt_SelectedSlot[playerid], itemid);
+					if(ret) {
+						Logger_Err("current container invalid in dialog call",
+							Logger_I("containerid", _:cnt_CurrentContainer[playerid]),
+							Logger_I("playerid", playerid));
+						ShowActionText(playerid, "An error occurred", 3000, 200);
+						return 1;
+					}
 
-	switch(listitem) {
-		case 0: {
-			if(GetPlayerItem(playerid) == INVALID_ITEM_ID) {
+					RemoveItemFromContainer(cnt_CurrentContainer[playerid], cnt_SelectedSlot[playerid], playerid);
+					GiveWorldItemToPlayer(playerid, itemid);
+					DisplayContainerInventory(playerid, cnt_CurrentContainer[playerid]);
+				} else {
+					ShowActionText(playerid, "You are already holding something", 3000, 200);
+					DisplayContainerInventory(playerid, cnt_CurrentContainer[playerid]);
+				}
+			}
+
+			case 1: {
 				new
 					Item:itemid,
 					ret;
 
 				ret = GetContainerSlotItem(cnt_CurrentContainer[playerid], cnt_SelectedSlot[playerid], itemid);
 				if(ret) {
-					err("current container invalid in dialog call",
-						_i("containerid", _:cnt_CurrentContainer[playerid]),
-						_i("playerid", playerid));
+					Logger_Err("current container invalid in dialog call",
+						Logger_I("containerid", _:cnt_CurrentContainer[playerid]),
+						Logger_I("playerid", playerid));
 					ShowActionText(playerid, "An error occurred", 3000, 200);
 					return 1;
 				}
 
-				RemoveItemFromContainer(cnt_CurrentContainer[playerid], cnt_SelectedSlot[playerid], playerid);
-				GiveWorldItemToPlayer(playerid, itemid);
-				DisplayContainerInventory(playerid, cnt_CurrentContainer[playerid]);
-			} else {
-				ShowActionText(playerid, "You are already holding something", 3000, 200);
-				DisplayContainerInventory(playerid, cnt_CurrentContainer[playerid]);
-			}
-		}
+				if(!IsValidItem(itemid)) {
+					DisplayContainerInventory(playerid, cnt_CurrentContainer[playerid]);
+					return 0;
+				}
 
-		case 1: {
-			new
-				Item:itemid,
-				ret;
+				if(CallLocalFunction("OnMoveItemToInventory", "ddd", playerid, _:itemid, _:cnt_CurrentContainer[playerid])) {
+					return 0;
+				}
 
-			ret = GetContainerSlotItem(cnt_CurrentContainer[playerid], cnt_SelectedSlot[playerid], itemid);
-			if(ret) {
-				err("current container invalid in dialog call",
-					_i("containerid", _:cnt_CurrentContainer[playerid]),
-					_i("playerid", playerid));
-				ShowActionText(playerid, "An error occurred", 3000, 200);
+				new required = AddItemToInventory(playerid, itemid);
+
+				if(required > 0) {
+					new str[32];
+					format(str, sizeof(str), "Extra %d slots required", required);
+					ShowActionText(playerid, str, 3000, 150);
+				} else if(required == 0) {
+					new slot;
+					GetItemContainerSlot(itemid, slot);
+					RemoveItemFromContainer(cnt_CurrentContainer[playerid], slot, playerid);
+				}
+
+				DisplayContainerInventory(playerid, cnt_CurrentContainer[playerid]);
+
 				return 1;
 			}
 
-			if(!IsValidItem(itemid)) {
-				DisplayContainerInventory(playerid, cnt_CurrentContainer[playerid]);
-				return 0;
-			}
-
-			if(CallLocalFunction("OnMoveItemToInventory", "ddd", playerid, _:itemid, _:cnt_CurrentContainer[playerid])) {
-				return 0;
-			}
-
-			new required = AddItemToInventory(playerid, itemid);
-
-			if(required > 0) {
-				new str[32];
-				format(str, sizeof(str), "Extra %d slots required", required);
-				ShowActionText(playerid, str, 3000, 150);
-			} else if(required == 0) {
-				new slot;
-				GetItemContainerSlot(itemid, slot);
-				RemoveItemFromContainer(cnt_CurrentContainer[playerid], slot, playerid);
-			}
-
-			DisplayContainerInventory(playerid, cnt_CurrentContainer[playerid]);
-
-			return 1;
-		}
-
-		default: {
-			if(!CallLocalFunction("OnPlayerSelectContainerOpt", "ddd", playerid, _:cnt_CurrentContainer[playerid], listitem - 2)) {
-				DisplayContainerInventory(playerid, cnt_CurrentContainer[playerid]);
-			} else {
-				dbg("container-dialog", "closing container via option response");
-				ClosePlayerInventory(playerid);
+			default: {
+				if(!CallLocalFunction("OnPlayerSelectContainerOpt", "ddd", playerid, _:cnt_CurrentContainer[playerid], listitem - 2)) {
+					DisplayContainerInventory(playerid, cnt_CurrentContainer[playerid]);
+				} else {
+					Logger_Dbg("container-dialog", "closing container via option response");
+					ClosePlayerInventory(playerid);
+				}
 			}
 		}
+
+		return 1;
 	}
+	Dialog_ShowCallback(playerid, using inline Response, DIALOG_STYLE_LIST, tmp, cnt_OptionsList[playerid], "Accept", "Back");
 
-	return 1;
+	return 0;
 }
 
 hook OnPlayerViewInvOpt(playerid) {
