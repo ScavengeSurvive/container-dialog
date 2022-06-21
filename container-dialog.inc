@@ -221,7 +221,11 @@ stock ClosePlayerContainer(playerid, call = false) {
 		}
 	}
 
-	ShowPlayerDialog(playerid, -1, 0, NULL, NULL, NULL, NULL);
+	#if defined HidePlayerDialog
+		HidePlayerDialog(playerid);
+	#else
+		ShowPlayerDialog(playerid, -1, 0, NULL, NULL, NULL, NULL);
+	#endif
 	cnt_CurrentContainer[playerid] = INVALID_CONTAINER_ID;
 
 	return 0;
