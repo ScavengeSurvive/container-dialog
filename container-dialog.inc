@@ -386,7 +386,7 @@ hook OnPlayerViewInvOpt(playerid) {
 		cnt_InventoryOptionID[playerid] = AddInventoryOption(playerid, str);
 	}
 
-	return Y_HOOKS_CONTINUE_RETURN_0;
+	return 0;
 }
 
 hook OnPlayerSelectInvOpt(playerid, option) {
@@ -405,24 +405,24 @@ hook OnPlayerSelectInvOpt(playerid, option) {
 
 			if(!IsValidItem(itemid)) {
 				DisplayPlayerInventory(playerid);
-				return Y_HOOKS_CONTINUE_RETURN_0;
+				return 0;
 			}
 
 			new required = AddItemToContainer(cnt_CurrentContainer[playerid], itemid, playerid);
 
 			if(required == 0) {
 				if(CallLocalFunction("OnMoveItemToContainer", "ddd", playerid, _:itemid, _:cnt_CurrentContainer[playerid])) {
-					return Y_HOOKS_CONTINUE_RETURN_0;
+					return 0;
 				}
 			}
 
 			defer _container_showInv(playerid);
 
-			return Y_HOOKS_CONTINUE_RETURN_0;
+			return 0;
 		}
 	}
 
-	return Y_HOOKS_CONTINUE_RETURN_0;
+	return 0;
 }
 
 timer _container_showInv[0](playerid) {
@@ -439,7 +439,7 @@ hook OnPlayerOpenInventory(playerid) {
 		cnt_InventoryContainerItem[playerid] = AddInventoryListItem(playerid, str);
 	}
 
-	return Y_HOOKS_CONTINUE_RETURN_0;
+	return 0;
 }
 
 hook OnPlayerSelectExtraItem(playerid, item) {
@@ -447,9 +447,9 @@ hook OnPlayerSelectExtraItem(playerid, item) {
 		if(item == cnt_InventoryContainerItem[playerid]) {
 			ClosePlayerInventory(playerid);
 			DisplayContainerInventory(playerid, cnt_CurrentContainer[playerid]);
-			return Y_HOOKS_CONTINUE_RETURN_0;
+			return 0;
 		}
 	}
 
-	return Y_HOOKS_CONTINUE_RETURN_0;
+	return 0;
 }
