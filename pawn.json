@@ -7,13 +7,13 @@
 	"dependencies": [
 		"sampctl/samp-stdlib",
 		"ScavengeSurvive/container",
-		"ScavengeSurvive/inventory-dialog",
-		"Southclaws/zcmd"
+		"ScavengeSurvive/inventory-dialog"
 	],
 	"dev_dependencies": [
 		"ScavengeSurvive/test-boilerplate",
 		"ScavengeSurvive/test-boilerplate-item",
-		"ScavengeSurvive/test-boilerplate-items"
+		"ScavengeSurvive/test-boilerplate-items",
+		"Southclaws/zcmd"
 	],
 	"runtime": {
 		"version": "0.3.7",
