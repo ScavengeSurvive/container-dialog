@@ -198,6 +198,8 @@ stock DisplayContainerInventory(playerid, Container:containerid) {
 	}
 	Dialog_ShowCallback(playerid, using inline Response, DIALOG_STYLE_LIST, title, cnt_InventoryString[playerid], "Options", "Close");
 
+	CallLocalFunction("OnPlayerOpenedContainer", "dd", playerid, _:containerid)
+
 	return 0;
 }
 
