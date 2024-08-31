@@ -391,6 +391,10 @@ hook OnPlayerViewInvOpt(playerid) {
 	return 0;
 }
 
+timer _container_showInv[0](playerid) {
+	DisplayPlayerInventory(playerid);
+}
+
 hook OnPlayerSelectInvOpt(playerid, option) {
 	if(cnt_CurrentContainer[playerid] != INVALID_CONTAINER_ID) {
 		if(option == cnt_InventoryOptionID[playerid]) {
@@ -425,10 +429,6 @@ hook OnPlayerSelectInvOpt(playerid, option) {
 	}
 
 	return 0;
-}
-
-timer _container_showInv[0](playerid) {
-	DisplayPlayerInventory(playerid);
 }
 
 hook OnPlayerOpenInventory(playerid) {
