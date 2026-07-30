@@ -3,6 +3,7 @@ name: ci
 on:
   workflow_dispatch:
   push:
+    branches: [feat/pawnkit]
   pull_request:
     branches: [master]
 
