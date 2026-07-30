@@ -5,13 +5,18 @@
 	"entry": "test.pwn",
 	"output": "test.amx",
 	"dependencies": [
-		"sampctl/samp-stdlib",
-		"ScavengeSurvive/container",
-		"ScavengeSurvive/inventory-dialog"
+		"sampctl/samp-stdlib#8ffb055624308b25521665b60e78b5e6e6b3717f",
+		"pawnkit/container:1.0.1",
+		"pawnkit/inventory-dialog:1.8.2"
 	],
+	"build": {
+		"args": ["-d3", "-;+", "-(+", "-\\+", "-Z+"],
+		"constants": {
+			"AMX_OLD_CALL": ""
+		}
+	},
 	"dev_dependencies": [
 		"ScavengeSurvive/test-boilerplate",
-		"ScavengeSurvive/test-boilerplate-item",
 		"ScavengeSurvive/test-boilerplate-items",
 		"Southclaws/zcmd"
 	],
