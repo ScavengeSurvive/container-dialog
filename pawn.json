@@ -17,7 +17,7 @@
 	},
 	"dev_dependencies": [
 		"ScavengeSurvive/test-boilerplate",
-		"ScavengeSurvive/test-boilerplate-items",
+		"ScavengeSurvive/test-boilerplate-items@feat/pawnkit",
 		"Southclaws/zcmd"
 	],
 	"runtime": {
